@@ -1,0 +1,10 @@
+query getOneUser($input: getOneUserInput) {
+  getOneUser(input: $input) {
+    fullName
+    email
+    password
+    avatar
+    favotites
+    adress
+  }
+}
