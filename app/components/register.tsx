@@ -12,7 +12,8 @@ import CoffeeLogo from "@/assets/images/coffeeLogo";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { useAddUserMutation } from "@/generated";
-import inputChecker from "@/utils/registerInputChecker";
+import registerInputChecker from "@/utils/registerInputChecker";
+import { router } from "expo-router";
 
 export default function Register() {
   const [inputsVal, setInputsVal] = useState({
@@ -32,16 +33,14 @@ export default function Register() {
   });
   console.log(inputsVal);
 
-  async function signIn() {
-    // const isError = inputChecker(inputsVal);
-    // console.log("helloooo", inputChecker(inputsVal));
+  async function register() {
     try {
-      if (inputChecker(inputsVal) == 1) {
+      if (registerInputChecker(inputsVal) == 1) {
         console.log("Please check youre information");
-      } else if (inputChecker(inputsVal) == 2) {
+      } else if (registerInputChecker(inputsVal) == 2) {
         try {
           await addUserMutation();
-          console.log("ok");
+          router.replace("./login");
         } catch (err) {
           console.log(err);
         }
@@ -53,7 +52,6 @@ export default function Register() {
 
   return (
     <View style={styles.allcontainer}>
-      <View style={styles.headerHider}></View>
       <Image
         source={require("../../assets/images/registerBackImg.png")}
         style={{
@@ -103,13 +101,13 @@ export default function Register() {
           }
           value={inputsVal.confirmPassword}
         ></TextInput>
-        <Pressable onPressIn={() => signIn()} style={styles.registerButton}>
+        <Pressable onPressIn={() => register()} style={styles.registerButton}>
           <Text style={styles.registerButtonText}>Register</Text>
         </Pressable>
       </View>
       <View style={styles.loginRouterSection}>
         <Text style={styles.loginRouteText}>Already have an account ?</Text>
-        <Link href="/login">
+        <Link href="./login">
           <Text style={styles.loginText}>login</Text>
         </Link>
       </View>
@@ -124,14 +122,6 @@ const styles = StyleSheet.create({
     paddingTop: 70,
     alignItems: "center",
     backgroundColor: "#000000",
-  },
-  headerHider: {
-    position: "absolute",
-    top: -46.9,
-    height: 46.9,
-    width: Dimensions.get("window").width,
-    backgroundColor: "#000000",
-    zIndex: 3,
   },
   header: {
     gap: 21,

@@ -4,14 +4,6 @@ import { useEffect } from "react";
 import { StyleSheet, View, Dimensions, Text } from "react-native";
 
 export default function HomeScreen() {
-  console.log("haha");
-  console.log("haha");
-  console.log("haha");
-  console.log("haha");
-  console.log("haha");
-  console.log("haha");
-  console.log("haha");
-
   async function TokenChecker() {
     const token = await AsyncStorage.getItem("token");
     if (!token) {

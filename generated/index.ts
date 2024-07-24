@@ -19,9 +19,33 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Category = {
+  __typename?: 'Category';
+  _id?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type InputPrice = {
+  large?: InputMaybe<Scalars['String']['input']>;
+  medium?: InputMaybe<Scalars['String']['input']>;
+  small?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  addCategory?: Maybe<Array<Category>>;
+  addProduct?: Maybe<Array<Product>>;
   addUser?: Maybe<User>;
+};
+
+
+export type MutationAddCategoryArgs = {
+  input?: InputMaybe<AddCategoryInput>;
+};
+
+
+export type MutationAddProductArgs = {
+  input?: InputMaybe<AddProductInput>;
 };
 
 
@@ -29,10 +53,28 @@ export type MutationAddUserArgs = {
   input?: InputMaybe<CreateUserInput>;
 };
 
+export type Price = {
+  __typename?: 'Price';
+  large?: Maybe<Scalars['Int']['output']>;
+  medium?: Maybe<Scalars['Int']['output']>;
+  small?: Maybe<Scalars['Int']['output']>;
+};
+
+export type Product = {
+  __typename?: 'Product';
+  categoryId?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  imageURL?: Maybe<Array<Scalars['String']['output']>>;
+  name?: Maybe<Scalars['String']['output']>;
+  price?: Maybe<Price>;
+};
+
 export type Query = {
   __typename?: 'Query';
+  getAllCategory?: Maybe<Array<Category>>;
+  getAllProduct?: Maybe<Array<Product>>;
   getAllUser?: Maybe<Array<User>>;
-  getOneUser?: Maybe<User>;
+  getOneUser?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -50,6 +92,19 @@ export type User = {
   password?: Maybe<Scalars['String']['output']>;
 };
 
+export type AddCategoryInput = {
+  categoryName?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AddProductInput = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  imageURL?: InputMaybe<Array<Scalars['String']['input']>>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<InputPrice>;
+  size?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateUserInput = {
   avatar?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
@@ -58,7 +113,8 @@ export type CreateUserInput = {
 };
 
 export type GetOneUserInput = {
-  userId?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AddUserMutationVariables = Exact<{
@@ -73,12 +129,12 @@ export type GetAllUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllUserQuery = { __typename?: 'Query', getAllUser?: Array<{ __typename?: 'User', fullName?: string | null, email?: string | null, password?: string | null, avatar?: string | null, favotites?: Array<string> | null, adress?: string | null }> | null };
 
-export type GetOneUserQueryVariables = Exact<{
+export type QueryQueryVariables = Exact<{
   input?: InputMaybe<GetOneUserInput>;
 }>;
 
 
-export type GetOneUserQuery = { __typename?: 'Query', getOneUser?: { __typename?: 'User', fullName?: string | null, email?: string | null, password?: string | null, avatar?: string | null, favotites?: Array<string> | null, adress?: string | null } | null };
+export type QueryQuery = { __typename?: 'Query', getOneUser?: string | null };
 
 
 export const AddUserDocument = gql`
@@ -189,61 +245,54 @@ export type GetAllUserQueryHookResult = ReturnType<typeof useGetAllUserQuery>;
 export type GetAllUserLazyQueryHookResult = ReturnType<typeof useGetAllUserLazyQuery>;
 export type GetAllUserSuspenseQueryHookResult = ReturnType<typeof useGetAllUserSuspenseQuery>;
 export type GetAllUserQueryResult = Apollo.QueryResult<GetAllUserQuery, GetAllUserQueryVariables>;
-export const GetOneUserDocument = gql`
-    query getOneUser($input: getOneUserInput) {
-  getOneUser(input: $input) {
-    fullName
-    email
-    password
-    avatar
-    favotites
-    adress
-  }
+export const QueryDocument = gql`
+    query Query($input: getOneUserInput) {
+  getOneUser(input: $input)
 }
     `;
-export type GetOneUserProps<TChildProps = {}, TDataName extends string = 'data'> = {
-      [key in TDataName]: ApolloReactHoc.DataValue<GetOneUserQuery, GetOneUserQueryVariables>
+export type QueryProps<TChildProps = {}, TDataName extends string = 'data'> = {
+      [key in TDataName]: ApolloReactHoc.DataValue<QueryQuery, QueryQueryVariables>
     } & TChildProps;
-export function withGetOneUser<TProps, TChildProps = {}, TDataName extends string = 'data'>(operationOptions?: ApolloReactHoc.OperationOption<
+export function withQuery<TProps, TChildProps = {}, TDataName extends string = 'data'>(operationOptions?: ApolloReactHoc.OperationOption<
   TProps,
-  GetOneUserQuery,
-  GetOneUserQueryVariables,
-  GetOneUserProps<TChildProps, TDataName>>) {
-    return ApolloReactHoc.withQuery<TProps, GetOneUserQuery, GetOneUserQueryVariables, GetOneUserProps<TChildProps, TDataName>>(GetOneUserDocument, {
-      alias: 'getOneUser',
+  QueryQuery,
+  QueryQueryVariables,
+  QueryProps<TChildProps, TDataName>>) {
+    return ApolloReactHoc.withQuery<TProps, QueryQuery, QueryQueryVariables, QueryProps<TChildProps, TDataName>>(QueryDocument, {
+      alias: 'query',
       ...operationOptions
     });
 };
 
 /**
- * __useGetOneUserQuery__
+ * __useQueryQuery__
  *
- * To run a query within a React component, call `useGetOneUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOneUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetOneUserQuery({
+ * const { data, loading, error } = useQueryQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetOneUserQuery(baseOptions?: Apollo.QueryHookOptions<GetOneUserQuery, GetOneUserQueryVariables>) {
+export function useQueryQuery(baseOptions?: Apollo.QueryHookOptions<QueryQuery, QueryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetOneUserQuery, GetOneUserQueryVariables>(GetOneUserDocument, options);
+        return Apollo.useQuery<QueryQuery, QueryQueryVariables>(QueryDocument, options);
       }
-export function useGetOneUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOneUserQuery, GetOneUserQueryVariables>) {
+export function useQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<QueryQuery, QueryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetOneUserQuery, GetOneUserQueryVariables>(GetOneUserDocument, options);
+          return Apollo.useLazyQuery<QueryQuery, QueryQueryVariables>(QueryDocument, options);
         }
-export function useGetOneUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetOneUserQuery, GetOneUserQueryVariables>) {
+export function useQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<QueryQuery, QueryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetOneUserQuery, GetOneUserQueryVariables>(GetOneUserDocument, options);
+          return Apollo.useSuspenseQuery<QueryQuery, QueryQueryVariables>(QueryDocument, options);
         }
-export type GetOneUserQueryHookResult = ReturnType<typeof useGetOneUserQuery>;
-export type GetOneUserLazyQueryHookResult = ReturnType<typeof useGetOneUserLazyQuery>;
-export type GetOneUserSuspenseQueryHookResult = ReturnType<typeof useGetOneUserSuspenseQuery>;
-export type GetOneUserQueryResult = Apollo.QueryResult<GetOneUserQuery, GetOneUserQueryVariables>;
+export type QueryQueryHookResult = ReturnType<typeof useQueryQuery>;
+export type QueryLazyQueryHookResult = ReturnType<typeof useQueryLazyQuery>;
+export type QuerySuspenseQueryHookResult = ReturnType<typeof useQuerySuspenseQuery>;
+export type QueryQueryResult = Apollo.QueryResult<QueryQuery, QueryQueryVariables>;
